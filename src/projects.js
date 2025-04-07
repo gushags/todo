@@ -11,6 +11,7 @@ class Project {
     this.todos = [];
   }
 
+  // Create ToDo from inside project
   newToDo(title, description, priority, dueDate) {
     let t = new ToDo(title, description, priority, dueDate);
     this.todos.push(t);
@@ -18,6 +19,7 @@ class Project {
   }
 }
 
+// Individual ToDo
 class ToDo {
   constructor(title, description, priority, dueDate) {
     this.id = generateID();

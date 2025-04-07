@@ -1,21 +1,36 @@
 /* todos.js */
 
-import { format, formatDistance, formatRelative, subDays } from "date-fns";
+import { format, isToday, isFuture, formatDistanceToNow } from "date-fns";
 
-function createToDo({ title, description, complete, priority, dueDate }) {
-  const todo = {
-    title: title,
-    description: description,
-    complete: complete,
-    priority: priority,
-    createdDate: generateDate(),
-    id: generateID(),
-    dueDate: dueDate,
-  };
+// Create a project
+export class Project {
+  constructor(name, dueDate) {
+    [
+      (this.name = name),
+      (this.id = generateID()),
+      (this.createdDate = generateDate()),
+      (this.dueDate = dueDate),
+    ];
+  }
 
-  return {
-    ...todo,
-  };
+  createToDo() {
+    const newToDo = new ToDo();
+    return newToDo;
+  }
+}
+
+export class ToDo {
+  constructor(title, description, priority, dueDate) {
+    this.id = generateID();
+    this.title = title;
+    this.description = description;
+    this.priority = priority;
+    this.complete = false;
+    this.createdDate = generateDate();
+    this.dueDate = dueDate;
+    this.isDueSoon = isDueSoon(this.dueDate);
+    this.isToday = isToday(this.dueDate);
+  }
 }
 
 function generateDate() {
@@ -25,8 +40,20 @@ function generateDate() {
 
 function generateID() {
   const id = crypto.randomUUID();
-
   return id;
 }
 
-export { createToDo };
+function toggleComplete() {
+  this.complete ? (this.complete = false) : (this.complete = true);
+  // call display function to change UI
+}
+
+function isDueSoon(dueDate) {
+  if (isFuture(dueDate)) {
+    const due = formatDistanceToNow(dueDate);
+    if (due === "3 days" || due === "2 days" || due === "1 day") {
+      return due;
+      // UI update to show ToDo in yellow
+    }
+  }
+}

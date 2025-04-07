@@ -6,22 +6,19 @@ import "./styles.css";
 
 /* js modules */
 
-import { createToDo } from "./todos.js";
+import { Project } from "./projects.js";
+import { Projects } from "./projects.js";
 
-const party = {
-  title: "Party",
-  description: "Lorem ipsum",
-  complete: false,
-  priority: null,
-  dueDate: null,
-};
+// Testing
 
-const newToDo = createToDo(party);
+let proj = new Projects();
+const jeff = proj.newProject("Jeff");
+const amber = proj.newProject("Amber");
 
-console.log(newToDo.title);
-console.log(newToDo.description);
-console.log(newToDo.createdDate);
-console.log(newToDo.id);
+jeff.newToDo("Party", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
+jeff.newToDo("Jump", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
+amber.newToDo("Dog", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
+console.log(proj.projects);
 
 /*
 Use modules, factory functions, compositino to create todos and projects

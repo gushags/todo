@@ -1,9 +1,11 @@
 /* project.js */
 import { format, isToday, isFuture, formatDistanceToNow } from "date-fns";
+import { storeProject, storeToDo } from "./localstorage.js";
 
 // An individual project. Holds properties and behaviour for one project
 class Project {
   constructor(name, dueDate) {
+    this.type = "project";
     this.name = name;
     this.id = generateID();
     this.createdDate = generateDate();
@@ -14,7 +16,9 @@ class Project {
   // Create ToDo from inside project
   newToDo(title, description, priority, dueDate) {
     let t = new ToDo(title, description, priority, dueDate);
+    t.project = this.name;
     this.todos.push(t);
+    storeToDo(t); // store in localstorage
     return t;
   }
 }
@@ -22,6 +26,7 @@ class Project {
 // Individual ToDo
 class ToDo {
   constructor(title, description, priority, dueDate) {
+    this.type = "todo";
     this.id = generateID();
     this.title = title;
     this.description = description;
@@ -47,6 +52,7 @@ export class Projects {
   newProject(name) {
     let p = new Project(name);
     this.projects.push(p);
+    storeProject(p); // Store in localstorage
     return p;
   }
   // this could include anything

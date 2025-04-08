@@ -7,21 +7,71 @@ import "./styles.css";
 /* js modules */
 
 import { Projects } from "./projects.js";
+import {
+  storageAvailable,
+  getStorageByType,
+  assembleProjects,
+} from "./localstorage.js";
+
+// Use this to check if a session is already running, i.e., there is data in localstorage
+if (storageAvailable("localStorage")) {
+  // Yippee! We can use localStorage awesomeness
+  if (localStorage.length > 0) {
+    console.log("You already have data.");
+    // console.log(localStorage.getItem(allProjects));
+    // console.log(localStorage.getItem("today"));
+    // console.log(localStorage.getItem("Jeff"));
+    // console.log(localStorage.getItem("Amber"));
+    // localStorage.clear();
+  } else {
+    // nothing is in storage yet
+    let allProjects = new Projects();
+    const today = allProjects.newProject("today");
+    const jeff = allProjects.newProject("Jeff");
+    const amber = allProjects.newProject("Amber");
+
+    today.newToDo(
+      "Party",
+      "Lorem ipsum",
+      null,
+      "Sun Apr 06 2025 08:19:12 GMT-0700"
+    );
+    jeff.newToDo(
+      "Party",
+      "Lorem ipsum",
+      null,
+      "Sun Apr 06 2025 08:19:12 GMT-0700"
+    );
+    jeff.newToDo(
+      "Jump",
+      "Lorem ipsum",
+      null,
+      "Sun Apr 06 2025 08:19:12 GMT-0700"
+    );
+    amber.newToDo(
+      "Dog",
+      "Lorem ipsum",
+      null,
+      "Sun Apr 06 2025 08:19:12 GMT-0700"
+    );
+
+    console.log(today);
+    console.log(jeff);
+    console.log(amber);
+  }
+} else {
+  alert(
+    "Please use a browser that accomodates LocalStorage or this app will not work."
+  );
+}
+
+const storedTodos = getStorageByType("todo");
+const storedProjects = getStorageByType("project");
+let allProjects = assembleProjects(storedProjects);
+console.log(allProjects);
 
 // Testing
 
-let allProjects = new Projects();
-let today = allProjects.newProject("today");
-console.log(today);
-
-const jeff = allProjects.newProject("Jeff");
-const amber = allProjects.newProject("Amber");
-
-jeff.newToDo("Party", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
-jeff.newToDo("Jump", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
-amber.newToDo("Dog", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
-
-console.log(jeff);
 // console.log(jeff.todos.length);
 // console.log(allProjects.projects);
 // console.log(allProjects.projects[2].todos[0]);

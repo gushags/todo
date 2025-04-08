@@ -32,6 +32,10 @@ class ToDo {
     this.isDueSoon = isDueSoon(this.dueDate);
     this.isToday = isToday(this.dueDate);
   }
+
+  toggleComplete() {
+    this.complete ? (this.complete = false) : (this.complete = true);
+  }
 }
 
 // Class that holds a collection of projects and properties and functions for the group
@@ -70,8 +74,3 @@ function isDueSoon(dueDate) {
     }
   }
 }
-
-// function toggleComplete() {
-//   this.complete ? (this.complete = false) : (this.complete = true);
-//   // call display function to change UI
-// }

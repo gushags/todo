@@ -6,19 +6,56 @@ import "./styles.css";
 
 /* js modules */
 
-import { Project } from "./projects.js";
 import { Projects } from "./projects.js";
 
 // Testing
 
-let proj = new Projects();
-const jeff = proj.newProject("Jeff");
-const amber = proj.newProject("Amber");
+let allProjects = new Projects();
+let today = allProjects.newProject("today");
+console.log(today);
+
+const jeff = allProjects.newProject("Jeff");
+const amber = allProjects.newProject("Amber");
 
 jeff.newToDo("Party", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
 jeff.newToDo("Jump", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
 amber.newToDo("Dog", "Lorem ipsum", null, "Sun Apr 06 2025 08:19:12 GMT-0700");
-console.log(proj.projects);
+
+console.log(jeff);
+// console.log(jeff.todos.length);
+// console.log(allProjects.projects);
+// console.log(allProjects.projects[2].todos[0]);
+// console.log(allProjects.projects[1].id);
+// console.log(allProjects.numberOfProjects);
+// deleteToDo(jeff, jeff.todos[0].id);
+// console.log(jeff);
+
+// Delete project function
+function deleteProject(id) {
+  const index = findProjectIndex(id);
+  allProjects.projects.splice(index, 1);
+}
+
+function findProjectIndex(id) {
+  for (let i = 0; i < allProjects.numberOfProjects; i++) {
+    if (allProjects.projects[i].id === id) {
+      return i;
+    }
+  }
+}
+
+function deleteToDo(project, id) {
+  const index = findToDoIndex(project, id);
+  project.todos.splice(index, 1);
+}
+
+function findToDoIndex(project, id) {
+  for (let i = 0; i < project.todos.length; i++) {
+    if (project.todos[i].id === id) {
+      return i;
+    }
+  }
+}
 
 /*
 Use modules, factory functions, compositino to create todos and projects

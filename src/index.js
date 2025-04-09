@@ -7,22 +7,15 @@ import "./styles.css";
 /* js modules */
 
 import { Projects } from "./projects.js";
-import {
-  storageAvailable,
-  getStorageByType,
-  assembleProjects,
-} from "./localstorage.js";
+import { storageAvailable, assignToDoByProject } from "./localstorage.js";
 
 // Use this to check if a session is already running, i.e., there is data in localstorage
 if (storageAvailable("localStorage")) {
   // Yippee! We can use localStorage awesomeness
   if (localStorage.length > 0) {
     console.log("You already have data.");
-    // console.log(localStorage.getItem(allProjects));
-    // console.log(localStorage.getItem("today"));
-    // console.log(localStorage.getItem("Jeff"));
-    // console.log(localStorage.getItem("Amber"));
-    // localStorage.clear();
+    let currProjectsToDos = assignToDoByProject();
+    console.log(currProjectsToDos);
   } else {
     // nothing is in storage yet
     let allProjects = new Projects();
@@ -64,11 +57,6 @@ if (storageAvailable("localStorage")) {
     "Please use a browser that accomodates LocalStorage or this app will not work."
   );
 }
-
-const storedTodos = getStorageByType("todo");
-const storedProjects = getStorageByType("project");
-let allProjects = assembleProjects(storedProjects);
-console.log(allProjects);
 
 // Testing
 

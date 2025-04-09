@@ -28,7 +28,7 @@ export function storeProject(project) {
   localStorage.setItem(project.id, data);
 }
 
-export function getStorageByType(t) {
+function getStorageByType(t) {
   const data = [];
   if (localStorage.length) {
     for (let i = 0; i < localStorage.length; i++) {
@@ -49,7 +49,23 @@ export function getStorageByType(t) {
   }
 }
 
-export function assembleProjects(storedProj) {
+// Create initial state on second visit and beyond
+export function assignToDoByProject() {
+  const storedProjects = getStorageByType("project");
+  const allProjects = assembleProjects(storedProjects);
+  const storedTodos = getStorageByType("todo");
+  for (let i = 0; i < allProjects.length; i++) {
+    let test = allProjects[i].name;
+    for (let j = 0; j < storedTodos.length; j++) {
+      if (storedTodos[j].project === test) {
+        allProjects[i].todos.push(storedTodos[j]);
+      }
+    }
+  }
+  return allProjects;
+}
+
+function assembleProjects(storedProj) {
   let allProjects = [];
   for (let i = 0; i < storedProj.length; i++) {
     allProjects.push(storedProj[i]);

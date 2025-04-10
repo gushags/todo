@@ -49,7 +49,7 @@ function getStorageByType(t) {
   }
 }
 
-// Create initial state on second visit and beyond
+// Always populate DOM from localstorage
 export function assignToDoByProject() {
   const storedProjects = getStorageByType("project");
   const allProjects = assembleProjects(storedProjects);

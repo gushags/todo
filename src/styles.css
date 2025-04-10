@@ -1,1 +1,35 @@
 /* styles.css */
+main {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+#today {
+  background-color: aqua;
+  width: 50%;
+  flex: 2;
+}
+
+#project-display {
+  background-color: greenyellow;
+  flex: 2;
+}
+
+.display-none {
+  display: none;
+}
+
+#projects {
+  background-color: darkgray;
+  width: 25%;
+  flex: 1;
+}
+
+.todo {
+  /* Hold for today todos css */
+}
+
+.project {
+  /* Hold for projects css */
+}

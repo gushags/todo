@@ -10,6 +10,9 @@ class Project {
     this.id = generateID();
     this.createdDate = generateDate();
     this.dueDate = dueDate;
+    this.complete = false;
+    this.isDueSoon = isDueSoon(this.dueDate);
+    this.isToday = isToday(this.dueDate);
     this.todos = [];
   }
 

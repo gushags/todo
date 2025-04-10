@@ -8,6 +8,7 @@ import "./styles.css";
 
 import { Projects } from "./projects.js";
 import { storageAvailable, assignToDoByProject } from "./localstorage.js";
+import { renderProjects, renderToday } from "./ui.js";
 
 // Use this to check if a session is already running, i.e., there is data in localstorage
 if (storageAvailable("localStorage")) {
@@ -15,7 +16,8 @@ if (storageAvailable("localStorage")) {
   if (localStorage.length > 0) {
     console.log("You already have data.");
     let currProjectsToDos = assignToDoByProject();
-    console.log(currProjectsToDos);
+    renderToday(currProjectsToDos);
+    renderProjects(currProjectsToDos);
   } else {
     // nothing is in storage yet
     let allProjects = new Projects();
@@ -26,31 +28,36 @@ if (storageAvailable("localStorage")) {
     today.newToDo(
       "Party",
       "Lorem ipsum",
-      null,
+      "high",
+      "Sun Apr 06 2025 08:19:12 GMT-0700"
+    );
+    today.newToDo(
+      "Sleep",
+      "Lorem ipsum ipsum ipsum nu",
+      "low",
       "Sun Apr 06 2025 08:19:12 GMT-0700"
     );
     jeff.newToDo(
       "Party",
       "Lorem ipsum",
-      null,
+      "mid",
       "Sun Apr 06 2025 08:19:12 GMT-0700"
     );
     jeff.newToDo(
       "Jump",
       "Lorem ipsum",
-      null,
+      "low",
       "Sun Apr 06 2025 08:19:12 GMT-0700"
     );
     amber.newToDo(
       "Dog",
       "Lorem ipsum",
-      null,
+      "high",
       "Sun Apr 06 2025 08:19:12 GMT-0700"
     );
-
-    console.log(today);
-    console.log(jeff);
-    console.log(amber);
+    let currProjectsToDos = assignToDoByProject();
+    renderToday(currProjectsToDos);
+    renderProjects(currProjectsToDos);
   }
 } else {
   alert(

@@ -5,65 +5,79 @@ import "./css-reset-josh.css";
 import "./styles.css";
 
 /* js modules */
-
 import { Projects } from "./projects.js";
-import { storageAvailable, assignToDoByProject } from "./localstorage.js";
+import { assignToDoByProject } from "./localstorage.js";
 import { renderProjects, renderToday } from "./ui.js";
 
 // Use this to check if a session is already running, i.e., there is data in localstorage
-if (storageAvailable("localStorage")) {
-  // Yippee! We can use localStorage awesomeness
-  if (localStorage.length > 0) {
-    console.log("You already have data.");
-    let currProjectsToDos = assignToDoByProject();
-    renderToday(currProjectsToDos);
-    renderProjects(currProjectsToDos);
-  } else {
-    // nothing is in storage yet
-    let allProjects = new Projects();
-    const today = allProjects.newProject("today");
-    const jeff = allProjects.newProject("Jeff");
-    const amber = allProjects.newProject("Amber");
 
-    today.newToDo(
-      "Party",
-      "Lorem ipsum",
-      "high",
-      "Sun Apr 06 2025 08:19:12 GMT-0700"
-    );
-    today.newToDo(
-      "Sleep",
-      "Lorem ipsum ipsum ipsum nu",
-      "low",
-      "Sun Apr 06 2025 08:19:12 GMT-0700"
-    );
-    jeff.newToDo(
-      "Party",
-      "Lorem ipsum",
-      "mid",
-      "Sun Apr 06 2025 08:19:12 GMT-0700"
-    );
-    jeff.newToDo(
-      "Jump",
-      "Lorem ipsum",
-      "low",
-      "Sun Apr 06 2025 08:19:12 GMT-0700"
-    );
-    amber.newToDo(
-      "Dog",
-      "Lorem ipsum",
-      "high",
-      "Sun Apr 06 2025 08:19:12 GMT-0700"
-    );
-    let currProjectsToDos = assignToDoByProject();
-    renderToday(currProjectsToDos);
-    renderProjects(currProjectsToDos);
-  }
+if (localStorage.length > 0) {
+  console.log("You already have data.");
+  let currProjectsToDos = assignToDoByProject();
+  renderToday(currProjectsToDos);
+  renderProjects(currProjectsToDos);
 } else {
-  alert(
-    "Please use a browser that accomodates LocalStorage or this app will not work."
+  // nothing is in storage yet
+  let allProjects = new Projects();
+  console.log(allProjects); // find out if newToDo is here
+  let today = allProjects.newProject("today");
+  const jeff = allProjects.newProject("Jeff");
+  const amber = allProjects.newProject("Amber");
+
+  today.newToDo(
+    "Party",
+    "Lorem ipsum",
+    "high",
+    "Sun Apr 06 2025 08:19:12 GMT-0700"
   );
+  today.newToDo(
+    "Sleep",
+    "Lorem ipsum ipsum ipsum nu",
+    "low",
+    "Sun Apr 06 2025 08:19:12 GMT-0700"
+  );
+  jeff.newToDo(
+    "Party",
+    "Lorem ipsum",
+    "mid",
+    "Sun Apr 06 2025 08:19:12 GMT-0700"
+  );
+  jeff.newToDo(
+    "Jump",
+    "Lorem ipsum",
+    "low",
+    "Sun Apr 06 2025 08:19:12 GMT-0700"
+  );
+  amber.newToDo(
+    "Dog",
+    "Lorem ipsum",
+    "high",
+    "Sun Apr 06 2025 08:19:12 GMT-0700"
+  );
+  currProjectsToDos = assignToDoByProject();
+  renderToday(currProjectsToDos);
+  renderProjects(currProjectsToDos);
+  console.log(currProjectsToDos);
+
+  // Initialize forms
 }
+
+const todayButton = document.querySelector("#today-button");
+todayButton.addEventListener("click", (event) => {
+  console.log(today);
+  event.preventDefault();
+  const title = document.querySelector('[name="todo-title"]').value;
+  const desc = document.querySelector('[name="todo-desc"]').value;
+  const priority = document.querySelector('[name="todo-priority"]').value;
+  const date = document.querySelector('[name="todo-date"]').value;
+
+  // This doesn't work because there is no newToDo function on the object
+  // I can't figure out how to get this function to work no matter if I
+  // put it in the above if statement or not
+  today.newToDo(title, desc, priority, date);
+
+  console.log(today);
+});
 
 // Testing
 

@@ -11,6 +11,30 @@
       <div id="today">
         <h3>To Do</h3>
         <p>Add...</p>
+        <form>
+          <label for="todo-title">To Do</label>
+          <input type="text" id="todo-title" name="todo-title" required />
+          <label for="todo-desc">Description</label>
+          <input type="text" id="todo-desc" name="todo-desc" />
+          <label for="todo-date" required>Date</label>
+          <input type="date" id="todo-date" name="todo-date" />
+          <label for="todo-date">Priority</label>
+          <input
+            type="radio"
+            id="low"
+            name="todo-priority"
+            value="low"
+            checked
+          />
+          <label for="low">Low</label>
+
+          <input type="radio" id="mid" name="todo-priority" value="mid" />
+          <label for="mid">Mid</label>
+
+          <input type="radio" id="high" name="todo-priority" value="high" />
+          <label for="high">High</label>
+          <button id="today-button" type="submit">Add</button>
+        </form>
       </div>
       <div id="project-display" class="display-none"></div>
       <div id="projects">

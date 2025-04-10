@@ -58,10 +58,9 @@ if (localStorage.length > 0) {
   renderToday(currProjectsToDos);
   renderProjects(currProjectsToDos);
   console.log(currProjectsToDos);
-
-  // Initialize forms
 }
 
+// Initialize form button
 const todayButton = document.querySelector("#today-button");
 todayButton.addEventListener("click", (event) => {
   console.log(today);

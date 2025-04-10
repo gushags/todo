@@ -11,18 +11,29 @@ import { renderProjects, renderToday } from "./ui.js";
 
 // Use this to check if a session is already running, i.e., there is data in localstorage
 
+const allProjects = new Projects();
+
 if (localStorage.length > 0) {
-  console.log("You already have data.");
-  let currProjectsToDos = assignToDoByProject();
-  renderToday(currProjectsToDos);
-  renderProjects(currProjectsToDos);
+  // console.log("You already have data.");
+  // let currProjectsToDos = assignToDoByProject();
+  // renderToday(currProjectsToDos);
+  // renderProjects(currProjectsToDos);
+  // localStorage.clear();
+  /*
+    find projects in storedProjects by ID
+    then use id to find name
+    create new project by calling newProject
+    then use data to correctly
+    */
 } else {
   // nothing is in storage yet
-  let allProjects = new Projects();
+
   console.log(allProjects); // find out if newToDo is here
   let today = allProjects.newProject("today");
   const jeff = allProjects.newProject("Jeff");
   const amber = allProjects.newProject("Amber");
+  console.log("Jeff: " + jeff);
+  console.log("Amber: " + amber);
 
   today.newToDo(
     "Party",
@@ -54,7 +65,7 @@ if (localStorage.length > 0) {
     "high",
     "Sun Apr 06 2025 08:19:12 GMT-0700"
   );
-  currProjectsToDos = assignToDoByProject();
+  let currProjectsToDos = assignToDoByProject();
   renderToday(currProjectsToDos);
   renderProjects(currProjectsToDos);
   console.log(currProjectsToDos);

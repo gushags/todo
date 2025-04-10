@@ -35,6 +35,14 @@ function getStorageByType(t) {
 export function assignToDoByProject() {
   const storedProjects = getStorageByType("project");
   const allProjects = assembleProjects(storedProjects);
+  console.log("allProjects: " + allProjects[0].name);
+  console.log("allProjects: " + allProjects[0].id);
+  console.log("allProjects: " + allProjects[0].createdDate);
+  console.log("allProjects: " + allProjects[0].dueDate);
+  console.log("allProjects: " + allProjects[0].complete);
+  console.log("allProjects: " + allProjects[0].isDueSoon);
+  console.log("allProjects: " + allProjects[0].todos[0]);
+
   const storedTodos = getStorageByType("todo");
   for (let i = 0; i < allProjects.length; i++) {
     let test = allProjects[i].name;

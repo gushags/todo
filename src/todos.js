@@ -1,5 +1,9 @@
 /* todos.js */
 // Individual ToDo
+import { isToday } from "date-fns";
+
+import { generateID, generateDate, isDueSoon } from "./projects";
+
 export class ToDo {
   constructor(
     title,
@@ -23,10 +27,6 @@ export class ToDo {
 
   toggleComplete() {
     this.complete ? (this.complete = false) : (this.complete = true);
-  }
-
-  toJson() {
-    return JSON.stringify(this);
   }
 
   static fromJson(stored) {

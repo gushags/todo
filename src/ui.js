@@ -1,9 +1,77 @@
 /* ui.js */
 import { format } from "date-fns";
+import { Project } from "./projects";
+import { ToDo } from "./todos";
 
 const TODAY = "today";
+let allProjects = [];
 
-export function renderToday(stored) {
+export function inititalizeUI() {
+  // update UI
+  /*
+   * Check if localstorage is enabled
+   * -- Then check if "allProjects" there is already stored in localstorage
+   * ---- If it is stored
+   * ------ Get projects from localStorage
+   * ------ Loop thru the stored JSON and create projects using fromJSON function
+   * ------ Store those projects in allProjects array
+   * ---- Else if data is not stored
+   * ------ Create sample data to populate the DOM and save to allProjects
+   * ------ Send the data to localstorage using updatedLocalStorage function
+   *
+   */
+  if (storageAvailable("localStorage")) {
+    const storedProjects = localStorage.getItem("allProjects");
+    if (storedProjects) {
+      // Get projects from local storage
+      console.log("Getting data....");
+      const jsonList = JSON.parse(storedProjects);
+      const newProjectList = [];
+      jsonList.forEach((projectRaw) => {
+        const newProject = Project.fromJson(projectRaw);
+        newProjectList.push(newProject);
+      });
+      allProjects = newProjectList;
+
+      // Render default and projects to DOM
+    } else {
+      // Create default Today
+      let todayProj = new Project(TODAY);
+      let sampleProj = new Project("sample");
+      const todayTodo1 = new ToDo(
+        "Sample ToDo",
+        todayProj.id,
+        "You can write a description here.",
+        "high",
+        new Date()
+      );
+      const todayTodo2 = new ToDo(
+        "Sample ToDo #2",
+        todayProj.id,
+        "You can write a description here, too.",
+        "mid",
+        new Date()
+      );
+      const sampleTodo = new ToDo(
+        "Sample ToDo in Project",
+        sampleProj.id,
+        "You can write a description here, too.",
+        "low",
+        new Date()
+      );
+
+      todayProj.newToDo(todayTodo1);
+      todayProj.newToDo(todayTodo2);
+      sampleProj.newToDo(sampleTodo);
+      allProjects = [todayProj, sampleProj];
+      updateLocalStorage();
+    }
+  }
+  renderToday(allProjects);
+  renderProjects(allProjects);
+}
+
+function renderToday(stored) {
   // render ui
   const today = document.querySelector("#today");
   let ul = document.createElement("ul");
@@ -37,7 +105,7 @@ export function renderToday(stored) {
   }
 }
 
-export function renderProjects(stored) {
+function renderProjects(stored) {
   // render ui
   const projects = document.querySelector("#projects");
   let ul = document.createElement("ul");
@@ -105,6 +173,32 @@ function displayProjectToDos(project) {
   }
 }
 
-export function updateUI() {
-  // update UI
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      e.name === "QuotaExceededError" &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  }
+}
+
+/**
+ * Update localStorage with the current projectList.
+ * This function is only called when a change is made.
+ */
+function updateLocalStorage() {
+  console.log("Updating localStorage...");
+  if (storageAvailable("localStorage")) {
+    localStorage.setItem("allProjects", JSON.stringify(allProjects));
+  }
 }

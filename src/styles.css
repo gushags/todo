@@ -33,3 +33,8 @@ main {
 .project {
   /* Hold for projects css */
 }
+
+#today-add:hover,
+#project-add:hover {
+  cursor: pointer;
+}

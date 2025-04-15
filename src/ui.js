@@ -111,7 +111,8 @@ function renderToday(stored) {
 
 function renderProjects(stored) {
   // render ui
-  const projects = document.querySelector("#projects");
+  const projects = document.querySelector("#projects-list");
+  projects.replaceChildren();
   let ul = document.createElement("ul");
   projects.appendChild(ul);
   // display projects in #projects
@@ -210,7 +211,8 @@ function updateLocalStorage() {
 /**
  * Form controls
  */
-// Initialize form button
+
+// Initialize Today form button
 const todayButton = document.querySelector("#today-button");
 todayButton.addEventListener("click", (event) => {
   event.preventDefault();
@@ -221,14 +223,52 @@ todayButton.addEventListener("click", (event) => {
       const title = document.querySelector('[name="todo-title"]').value;
       const proj = today.id;
       const desc = document.querySelector('[name="todo-desc"]').value;
-      const priority = document.querySelector('[name="todo-priority"]').value;
+      const priority = document.querySelector(
+        '[name="todo-priority"]:checked'
+      ).value;
       const date = document.querySelector('[name="todo-date"]').value;
       const todayToDo = new ToDo(title, proj, desc, priority, date);
       today.newToDo(todayToDo);
 
       renderToday(allProjects); // Update only Today section
-      updateLocalStorage(); // Update storage to relfect change
-      document.getElementById("today-form").reset();
+      updateLocalStorage(); // Update storage to reflect change
+      const todayForm = document.getElementById("today-form");
+      todayForm.reset();
+      todayForm.classList.toggle("display-none");
+      //
     }
   }
+});
+
+// Initialize Project form button
+const projectButton = document.querySelector("#project-button");
+projectButton.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  const title = document.querySelector('[name="project-title"]').value;
+  const date = document.querySelector('[name="todo-date"]').value;
+  // Create new project and push to allProjects
+  const project = new Project(title, date);
+  allProjects.push(project);
+
+  renderProjects(allProjects); // Update only Projects section
+  updateLocalStorage(); // Update storage to reflect change
+
+  const projectForm = document.getElementById("project-form");
+  projectForm.reset();
+  projectForm.classList.toggle("display-none");
+});
+
+// Add Today TODO event listener
+const todayAdd = document.querySelector("#today-add");
+todayAdd.addEventListener("click", () => {
+  const todayForm = document.querySelector("#today-form");
+  todayForm.classList.toggle("display-none");
+});
+
+// Add Project event listener
+const projectAdd = document.querySelector("#project-add");
+projectAdd.addEventListener("click", () => {
+  const projectAdd = document.querySelector("#project-form");
+  projectAdd.classList.toggle("display-none");
 });

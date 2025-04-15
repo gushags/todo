@@ -151,8 +151,10 @@ function displayProjectToDos(project) {
   projectDisplay.classList.remove("display-none");
   projectDisplay.replaceChildren(); // Clear existing project todos
   let p = document.createElement("p");
+  p.id = "project-todo-add";
   let ul = document.createElement("ul");
   let h3 = document.createElement("h3");
+  h3.dataset.projectId = project.id;
   p.textContent = "Add ToDo...";
   const form = createToDoForm();
   h3.textContent = project.name;
@@ -161,6 +163,11 @@ function displayProjectToDos(project) {
   h3.addEventListener("click", () => {
     projectDisplay.classList.toggle("display-none");
   });
+  // Add listener to close todos by clicking on title
+  p.addEventListener("click", () => {
+    form.classList.toggle("display-none");
+  });
+
   projectDisplay.appendChild(h3);
   projectDisplay.appendChild(p);
   projectDisplay.appendChild(form);
@@ -242,8 +249,8 @@ todayButton.addEventListener("click", (event) => {
       const todayToDo = new ToDo(title, proj, desc, priority, date);
       today.newToDo(todayToDo);
 
-      renderToday(allProjects); // Update only Today section
       updateLocalStorage(); // Update storage to reflect change
+      renderToday(allProjects); // Update only Today section
       const todayForm = document.getElementById("today-form");
       todayForm.reset();
       todayForm.classList.toggle("display-none");
@@ -269,20 +276,6 @@ projectButton.addEventListener("click", (event) => {
   const projectForm = document.getElementById("project-form");
   projectForm.reset();
   projectForm.classList.toggle("display-none");
-});
-
-// Add Today TODO event listener
-const todayAdd = document.querySelector("#today-add");
-todayAdd.addEventListener("click", () => {
-  const todayForm = document.querySelector("#today-form");
-  todayForm.classList.toggle("display-none");
-});
-
-// Add Project event listener
-const projectAdd = document.querySelector("#project-add");
-projectAdd.addEventListener("click", () => {
-  const projectAdd = document.querySelector("#project-form");
-  projectAdd.classList.toggle("display-none");
 });
 
 // TODO form for inside new project
@@ -357,6 +350,28 @@ function createToDoForm() {
   projTodoBtn.id = "proj-todo-button";
   projTodoBtn.setAttribute("type", "submit");
   projTodoBtn.textContent = "Add";
+  projTodoBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    const title = document.querySelector('[name="projTodo-title"]').value;
+    const h3 = document.querySelector("[data-project-id]");
+    const projID = h3.dataset.projectId;
+    // console.log(projID);
+    const projectIndex = allProjects.findIndex((x) => x.id === projID);
+
+    const desc = document.querySelector('[name="projTodo-desc"]').value;
+    const priority = document.querySelector(
+      '[name="projTodo-priority"]:checked'
+    ).value;
+
+    const date = document.querySelector('[name="projTodo-date"]').value;
+    const projectToDo = new ToDo(title, projID, desc, priority, date);
+    allProjects[projectIndex].newToDo(projectToDo);
+
+    updateLocalStorage(); // Update storage to reflect change
+    displayProjectToDos(allProjects[projectIndex]); // Update only Projects section
+
+    form.reset();
+  });
 
   // Append to form
   form.appendChild(labelTitle);
@@ -376,3 +391,21 @@ function createToDoForm() {
 
   return form;
 }
+
+/**
+ * Event controllers
+ */
+
+// Add Today TODO event listener
+const todayAdd = document.querySelector("#today-add");
+todayAdd.addEventListener("click", () => {
+  const todayForm = document.querySelector("#today-form");
+  todayForm.classList.toggle("display-none");
+});
+
+// Add Project event listener
+const projectAdd = document.querySelector("#project-add");
+projectAdd.addEventListener("click", () => {
+  const projectAdd = document.querySelector("#project-form");
+  projectAdd.classList.toggle("display-none");
+});

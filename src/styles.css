@@ -35,6 +35,7 @@ main {
 }
 
 #today-add:hover,
-#project-add:hover {
+#project-add:hover,
+#project-todo-add:hover {
   cursor: pointer;
 }

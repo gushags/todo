@@ -74,6 +74,11 @@ export function inititalizeUI() {
   renderProjects(allProjects);
 }
 
+/**
+ *
+ * Render functions
+ *
+ */
 function renderToday(stored) {
   // render ui
   const today = document.querySelector("#today-display");
@@ -145,15 +150,22 @@ function displayProjectToDos(project) {
   const projectDisplay = document.querySelector("#project-display");
   projectDisplay.classList.remove("display-none");
   projectDisplay.replaceChildren(); // Clear existing project todos
+  let p = document.createElement("p");
   let ul = document.createElement("ul");
   let h3 = document.createElement("h3");
+  p.textContent = "Add ToDo...";
+  const form = createToDoForm();
   h3.textContent = project.name;
+
   // Add listener to close todos by clicking on title
   h3.addEventListener("click", () => {
     projectDisplay.classList.toggle("display-none");
   });
+  projectDisplay.appendChild(h3);
+  projectDisplay.appendChild(p);
+  projectDisplay.appendChild(form);
   projectDisplay.appendChild(ul);
-  ul.appendChild(h3);
+
   for (let i = 0; i < project.todos.length; i++) {
     let ol = document.createElement("ol");
     let h4 = document.createElement("h4");
@@ -272,3 +284,95 @@ projectAdd.addEventListener("click", () => {
   const projectAdd = document.querySelector("#project-form");
   projectAdd.classList.toggle("display-none");
 });
+
+// TODO form for inside new project
+function createToDoForm() {
+  const form = document.createElement("form");
+  form.classList.add("display-none");
+  form.id = "project-todos";
+
+  const labelTitle = document.createElement("label");
+  labelTitle.setAttribute("for", "projTodo-title");
+  labelTitle.textContent = "To Do";
+
+  const inputTitle = document.createElement("input");
+  inputTitle.setAttribute("type", "text");
+  inputTitle.setAttribute("name", "projTodo-title");
+  inputTitle.required = true;
+
+  const labelDesc = document.createElement("label");
+  labelDesc.setAttribute("for", "projTodo-desc");
+  labelDesc.textContent = "Description";
+
+  const inputDesc = document.createElement("input");
+  inputDesc.setAttribute("type", "text");
+  inputDesc.setAttribute("name", "projTodo-desc");
+  inputDesc.required = true;
+
+  const labelDate = document.createElement("label");
+  labelDate.setAttribute("for", "projTodo-date");
+  labelDate.textContent = "Due Date";
+
+  const inputDate = document.createElement("input");
+  inputDate.setAttribute("type", "date");
+  inputDate.setAttribute("name", "projTodo-date");
+  inputDate.required = true;
+
+  const labelPriority = document.createElement("label");
+  labelPriority.setAttribute("for", "projTodo-priority");
+  labelPriority.textContent = "Priority";
+
+  const inputPriority1 = document.createElement("input");
+  inputPriority1.setAttribute("type", "radio");
+  inputPriority1.id = "low";
+  inputPriority1.setAttribute("name", "projTodo-priority");
+  inputPriority1.setAttribute("value", "low");
+  inputPriority1.checked = true;
+
+  const labelPriority1 = document.createElement("label");
+  labelPriority1.setAttribute("for", "low");
+  labelPriority1.textContent = "Low";
+
+  const inputPriority2 = document.createElement("input");
+  inputPriority2.setAttribute("type", "radio");
+  inputPriority2.id = "mid";
+  inputPriority2.setAttribute("name", "projTodo-priority");
+  inputPriority2.setAttribute("value", "mid");
+
+  const labelPriority2 = document.createElement("label");
+  labelPriority2.setAttribute("for", "mid");
+  labelPriority2.textContent = "Mid";
+
+  const inputPriority3 = document.createElement("input");
+  inputPriority3.setAttribute("type", "radio");
+  inputPriority3.id = "high";
+  inputPriority3.setAttribute("name", "projTodo-priority");
+  inputPriority3.setAttribute("value", "high");
+
+  const labelPriority3 = document.createElement("label");
+  labelPriority3.setAttribute("for", "high");
+  labelPriority3.textContent = "High";
+
+  const projTodoBtn = document.createElement("button");
+  projTodoBtn.id = "proj-todo-button";
+  projTodoBtn.setAttribute("type", "submit");
+  projTodoBtn.textContent = "Add";
+
+  // Append to form
+  form.appendChild(labelTitle);
+  form.appendChild(inputTitle);
+  form.appendChild(labelDesc);
+  form.appendChild(inputDesc);
+  form.appendChild(labelDate);
+  form.appendChild(inputDate);
+  form.appendChild(labelPriority);
+  form.appendChild(inputPriority1);
+  form.appendChild(labelPriority1);
+  form.appendChild(inputPriority2);
+  form.appendChild(labelPriority2);
+  form.appendChild(inputPriority3);
+  form.appendChild(labelPriority3);
+  form.appendChild(projTodoBtn);
+
+  return form;
+}

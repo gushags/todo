@@ -32,6 +32,9 @@ export function inititalizeUI() {
         newProjectList.push(newProject);
       });
       allProjects = newProjectList;
+      // See if I can get this to go into allProjects again
+
+      updateLocalStorage();
 
       // Render default and projects to DOM
     } else {
@@ -73,7 +76,8 @@ export function inititalizeUI() {
 
 function renderToday(stored) {
   // render ui
-  const today = document.querySelector("#today");
+  const today = document.querySelector("#today-display");
+  today.replaceChildren(); // Clear existing Today todos
   let ul = document.createElement("ul");
   today.appendChild(ul);
   // display Today ToDos in #today
@@ -202,3 +206,29 @@ function updateLocalStorage() {
     localStorage.setItem("allProjects", JSON.stringify(allProjects));
   }
 }
+
+/**
+ * Form controls
+ */
+// Initialize form button
+const todayButton = document.querySelector("#today-button");
+todayButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  for (const project of allProjects) {
+    if (project.name === TODAY) {
+      const today = project;
+
+      const title = document.querySelector('[name="todo-title"]').value;
+      const proj = today.id;
+      const desc = document.querySelector('[name="todo-desc"]').value;
+      const priority = document.querySelector('[name="todo-priority"]').value;
+      const date = document.querySelector('[name="todo-date"]').value;
+      const todayToDo = new ToDo(title, proj, desc, priority, date);
+      today.newToDo(todayToDo);
+
+      renderToday(allProjects); // Update only Today section
+      updateLocalStorage(); // Update storage to relfect change
+      document.getElementById("today-form").reset();
+    }
+  }
+});

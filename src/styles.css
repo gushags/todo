@@ -1,8 +1,14 @@
 /* styles.css */
+body {
+  width: 95%;
+  margin: 25px auto;
+}
+
 main {
   display: flex;
   flex-direction: row;
   gap: 20px;
+  margin-top: 25px;
 }
 
 #today {
@@ -32,6 +38,10 @@ main {
 
 .project {
   /* Hold for projects css */
+}
+
+.delete-button {
+  /* Hold for delete button */
 }
 
 #today-add:hover,

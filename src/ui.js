@@ -90,25 +90,43 @@ function renderToday(stored) {
     if (stored[i].name === TODAY || stored[i].isToday) {
       for (let j = 0; j < stored[i].todos.length; j++) {
         let ol = document.createElement("ol");
+        let check = document.createElement("input");
         let h4 = document.createElement("h4");
         let desc = document.createElement("p");
         let date = document.createElement("p");
         let priority = document.createElement("p");
+        let deleteBtn = document.createElement("button");
         ol.classList.add("todo");
         ol.dataset.id = stored[i].todos[j].id;
         ol.dataset.isDueSoon = stored[i].todos[j].isDueSoon;
         ol.dataset.isToday = stored[i].todos[j].isToday;
         ol.dataset.complete = stored[i].todos[j].complete;
+        check.setAttribute("type", "checkbox");
         h4.textContent = stored[i].todos[j].title;
         desc.textContent = stored[i].todos[j].description;
         date.textContent = format(stored[i].todos[j].dueDate, "PPP");
         priority.textContent = stored[i].todos[j].priority;
+        deleteBtn.setAttribute("type", "submit");
+        deleteBtn.classList.add("delete-button");
+        deleteBtn.textContent = "X";
 
         ul.appendChild(ol);
+        ol.appendChild(check);
         ol.appendChild(h4);
         ol.appendChild(desc);
         ol.appendChild(date);
         ol.appendChild(priority);
+        ol.appendChild(deleteBtn);
+
+        // Event listeners
+        deleteBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          const project = stored[i];
+          const todo = stored[i].todos[j].id;
+          deleteToDo(project, todo);
+          updateLocalStorage();
+          renderToday(allProjects);
+        });
       }
     }
   }
@@ -124,23 +142,40 @@ function renderProjects(stored) {
   for (let i = 0; i < stored.length; i++) {
     if (stored[i].name !== TODAY) {
       let ol = document.createElement("ol");
+      let check = document.createElement("input");
       let h4 = document.createElement("h4");
       let date = document.createElement("p");
+      let deleteBtn = document.createElement("button");
       ol.classList.add("project");
       ol.dataset.id = stored[i].id;
       ol.dataset.isDueSoon = stored[i].isDueSoon;
       ol.dataset.isToday = stored[i].isToday;
       ol.dataset.complete = stored[i].complete;
+      check.setAttribute("type", "checkbox");
       h4.textContent = stored[i].name;
       date.textContent = stored[i].dueDate;
+      deleteBtn.setAttribute("type", "submit");
+      deleteBtn.classList.add("delete-button");
+      deleteBtn.textContent = "X";
 
       ul.appendChild(ol);
+      ol.appendChild(check);
       ol.appendChild(h4);
       ol.appendChild(date);
+      ol.appendChild(deleteBtn);
 
-      // Add listener to populate projects's todos in #project-display
-      ol.addEventListener("click", () => {
+      // Add event listeners
+      h4.addEventListener("click", () => {
         displayProjectToDos(stored[i]);
+      });
+
+      deleteBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const projID = stored[i].id;
+        deleteProject(projID);
+        updateLocalStorage();
+        renderProjects(allProjects);
       });
     }
   }
@@ -175,25 +210,43 @@ function displayProjectToDos(project) {
 
   for (let i = 0; i < project.todos.length; i++) {
     let ol = document.createElement("ol");
+    let check = document.createElement("input");
     let h4 = document.createElement("h4");
     let desc = document.createElement("p");
     let date = document.createElement("p");
     let priority = document.createElement("p");
+    let deleteBtn = document.createElement("button");
     ol.classList.add("todo");
     ol.dataset.id = project.todos[i].id;
     ol.dataset.isDueSoon = project.todos[i].isDueSoon;
     ol.dataset.isToday = project.todos[i].isToday;
     ol.dataset.complete = project.todos[i].complete;
+    check.setAttribute("type", "checkbox");
     h4.textContent = project.todos[i].title;
     desc.textContent = project.todos[i].description;
     date.textContent = format(project.todos[i].dueDate, "PPP");
     priority.textContent = project.todos[i].priority;
+    deleteBtn.setAttribute("type", "submit");
+    deleteBtn.classList.add("delete-button");
+    deleteBtn.textContent = "X";
 
     ul.appendChild(ol);
+    ol.appendChild(check);
     ol.appendChild(h4);
     ol.appendChild(desc);
     ol.appendChild(date);
     ol.appendChild(priority);
+    ol.appendChild(deleteBtn);
+
+    // Event listeners
+    deleteBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      const proj = project;
+      const todo = project.todos[i].id;
+      deleteToDo(proj, todo);
+      updateLocalStorage();
+      displayProjectToDos(proj);
+    });
   }
 }
 
@@ -409,3 +462,35 @@ projectAdd.addEventListener("click", () => {
   const projectAdd = document.querySelector("#project-form");
   projectAdd.classList.toggle("display-none");
 });
+
+// Delete project function
+function deleteProject(id) {
+  const index = findProjectIndex(id);
+  allProjects.splice(index, 1);
+}
+
+function findProjectIndex(id) {
+  if (confirm("Delete this project?")) {
+    for (let i = 0; i < allProjects.length; i++) {
+      if (allProjects[i].id === id) {
+        return i;
+      }
+    }
+  }
+}
+
+// Delete TODO function
+function deleteToDo(project, id) {
+  if (confirm("Delete this ToDo?")) {
+    const index = findToDoIndex(project, id);
+    project.todos.splice(index, 1);
+  }
+}
+
+function findToDoIndex(project, id) {
+  for (let i = 0; i < project.todos.length; i++) {
+    if (project.todos[i].id === id) {
+      return i;
+    }
+  }
+}

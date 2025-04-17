@@ -8,18 +8,6 @@ let allProjects = [];
 
 export function inititalizeUI() {
   // update UI
-  /*
-   * Check if localstorage is enabled
-   * -- Then check if "allProjects" there is already stored in localstorage
-   * ---- If it is stored
-   * ------ Get projects from localStorage
-   * ------ Loop thru the stored JSON and create projects using fromJSON function
-   * ------ Store those projects in allProjects array
-   * ---- Else if data is not stored
-   * ------ Create sample data to populate the DOM and save to allProjects
-   * ------ Send the data to localstorage using updatedLocalStorage function
-   *
-   */
   if (storageAvailable("localStorage")) {
     const storedProjects = localStorage.getItem("allProjects");
     if (storedProjects) {
@@ -62,6 +50,7 @@ export function inititalizeUI() {
         "low",
         new Date()
       );
+      sampleTodo.toggleComplete();
 
       todayProj.newToDo(todayTodo1);
       todayProj.newToDo(todayTodo2);
@@ -96,11 +85,17 @@ function renderToday(stored) {
         let date = document.createElement("p");
         let priority = document.createElement("p");
         let deleteBtn = document.createElement("button");
+        let divTop = document.createElement("div");
+        let divMid = document.createElement("div");
+        let divBottom = document.createElement("div");
         ol.classList.add("todo");
         ol.dataset.id = stored[i].todos[j].id;
         ol.dataset.isDueSoon = stored[i].todos[j].isDueSoon;
         ol.dataset.isToday = stored[i].todos[j].isToday;
         ol.dataset.complete = stored[i].todos[j].complete;
+        divTop.classList.add("div-top");
+        divMid.classList.add("div-mid");
+        divBottom.classList.add("div-bottom");
         check.setAttribute("type", "checkbox");
         h4.textContent = stored[i].todos[j].title;
         desc.textContent = stored[i].todos[j].description;
@@ -111,12 +106,15 @@ function renderToday(stored) {
         deleteBtn.textContent = "X";
 
         ul.appendChild(ol);
-        ol.appendChild(check);
-        ol.appendChild(h4);
-        ol.appendChild(desc);
-        ol.appendChild(date);
-        ol.appendChild(priority);
-        ol.appendChild(deleteBtn);
+        ol.appendChild(divTop);
+        divTop.appendChild(check);
+        divTop.appendChild(h4);
+        divTop.appendChild(deleteBtn);
+        ol.appendChild(divMid);
+        divMid.appendChild(desc);
+        ol.appendChild(divBottom);
+        divBottom.appendChild(date);
+        divBottom.appendChild(priority);
 
         // Event listeners
         deleteBtn.addEventListener("click", (event) => {
@@ -124,6 +122,14 @@ function renderToday(stored) {
           const project = stored[i];
           const todo = stored[i].todos[j].id;
           deleteToDo(project, todo);
+          updateLocalStorage();
+          renderToday(allProjects);
+        });
+
+        check.addEventListener("click", () => {
+          const todo = stored[i].todos[j];
+          console.log(todo);
+          todo.toggleComplete();
           updateLocalStorage();
           renderToday(allProjects);
         });

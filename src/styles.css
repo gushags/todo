@@ -49,3 +49,27 @@ main {
 #project-todo-add:hover {
   cursor: pointer;
 }
+
+#today-add,
+#project-add,
+#project-todo-add {
+  font-style: italic;
+}
+.div-top {
+  display: flex;
+}
+.div-mid {
+  /* hold for div-mid */
+}
+.div-bottom {
+  display: flex;
+}
+
+ol[data-complete="true"] > div > h4 {
+  text-decoration: line-through;
+}
+
+ol[data-complete="true"] > div > h4,
+ol[data-complete="true"] > div > p {
+  color: slategray;
+}

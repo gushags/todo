@@ -12,13 +12,11 @@ main {
 }
 
 #today {
-  background-color: aqua;
   width: 50%;
   flex: 2;
 }
 
 #project-display {
-  background-color: greenyellow;
   flex: 2;
 }
 
@@ -41,12 +39,17 @@ main {
 }
 
 .delete-button {
-  /* Hold for delete button */
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-weight: bold;
+  width: 15px;
 }
 
 #today-add:hover,
 #project-add:hover,
-#project-todo-add:hover {
+#project-todo-add:hover,
+.delete-button:hover {
   cursor: pointer;
 }
 
@@ -54,22 +57,144 @@ main {
 #project-add,
 #project-todo-add {
   font-style: italic;
+  padding: 5px 0;
 }
 .div-top {
   display: flex;
+  justify-content: space-between;
 }
-.div-mid {
-  /* hold for div-mid */
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #eee;
+  border: 2px solid hsl(0, 0%, 55%);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Custom checkmark */
+input[type="checkbox"]:checked {
+  background: #4caf50;
+  border-color: #4caf50;
+  position: relative;
+}
+
+input[type="checkbox"]:checked::before {
+  content: "\2714"; /* Unicode checkmark */
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  color: white;
+  font-size: 16px;
+}
+
+h4 {
+  flex: 5;
+  padding-left: 7px;
+}
+
+.div-mid > p::before {
+  content: "DESC";
+  font-size: x-small;
+  padding-right: 7px;
 }
 .div-bottom {
   display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+ol[data-is-today="true"] {
+  background-color: #4caf5035;
+  border: 2px solid #4caf50;
+}
+ol[data-is-late="true"] {
+  background-color: #ff000020;
+  border: 2px solid #ff0000;
 }
 
 ol[data-complete="true"] > div > h4 {
   text-decoration: line-through;
 }
 
+.div-bottom > p:nth-child(1)::before {
+  content: "DUE DATE";
+  font-size: x-small;
+  padding-right: 7px;
+}
+
+.div-bottom > p:nth-child(2)::before {
+  content: "PRIORITY";
+  font-size: x-small;
+  padding-right: 7px;
+}
+
 ol[data-complete="true"] > div > h4,
 ol[data-complete="true"] > div > p {
   color: slategray;
+}
+
+ol {
+  border: 2px solid slategray;
+  border-radius: 7px;
+  padding: 7px;
+  margin-bottom: 7px;
+  background: #70809010;
+}
+
+ol[data-complete="true"] {
+  border: 2px solid #70809040;
+  border-radius: 7px;
+  padding: 7px;
+  margin-bottom: 7px;
+  background: #70809020;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 10px auto 20px auto;
+}
+form > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+label {
+  font-style: italic;
+  padding: 0 10px 5px 0;
+}
+
+form > div > input:not([type="date"]) {
+  flex: 4;
+  margin-bottom: 7px;
+  background: #4caf5025;
+  border: none;
+}
+form > button {
+  width: 80px;
+  padding: 4px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 15px;
+  background: #4caf5025;
+}
+form > button:hover {
+  background: #4caf5055;
+}
+
+input[type="date"] {
+  width: 125px;
+  margin-bottom: 7px;
+  background: #4caf5025;
+  border: none;
+}
+input[type="radio"] {
+  accent-color: #169169;
+}
+
+input:focus-visible {
+  outline-color: #4caf50;
 }

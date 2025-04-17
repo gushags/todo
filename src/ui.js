@@ -1,10 +1,14 @@
 /* ui.js */
 import { format } from "date-fns";
-import { Project } from "./projects";
+import { Project, generateDate } from "./projects";
 import { ToDo } from "./todos";
 
 const TODAY = "today";
 let allProjects = [];
+
+const h1 = document.querySelector("h1");
+const todayDate = generateDate();
+h1.textContent = "Today — " + todayDate;
 
 export function inititalizeUI() {
   // update UI
@@ -28,32 +32,39 @@ export function inititalizeUI() {
     } else {
       // Create default Today
       let todayProj = new Project(TODAY);
-      let sampleProj = new Project("sample");
+      let sampleProj = new Project("Sample Project");
       const todayTodo1 = new ToDo(
-        "Sample ToDo",
+        "Please delete me",
         todayProj.id,
-        "You can write a description here.",
-        "high",
+        "You can delete this TODO by clicking the 'X'. TODOs due today are green.",
+        "High",
         new Date()
       );
       const todayTodo2 = new ToDo(
-        "Sample ToDo #2",
+        "<-- Set this TODO as complete by clicking the checkbox",
         todayProj.id,
         "You can write a description here, too.",
-        "mid",
-        new Date()
+        "Mid",
+        new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000)
+      );
+      const todayTodo3 = new ToDo(
+        "When a TODO is late, it turns red.",
+        todayProj.id,
+        "Better do this one quick. :-)",
+        "Mid",
+        new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000)
       );
       const sampleTodo = new ToDo(
         "Sample ToDo in Project",
         sampleProj.id,
-        "You can write a description here, too.",
-        "low",
-        new Date()
+        "You can write a description here. Delete this TODO by clicking the 'X'. Create a new one by clicking 'Add' above.",
+        "Low",
+        new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
       );
-      sampleTodo.toggleComplete();
 
       todayProj.newToDo(todayTodo1);
       todayProj.newToDo(todayTodo2);
+      todayProj.newToDo(todayTodo3);
       sampleProj.newToDo(sampleTodo);
       allProjects = [todayProj, sampleProj];
       updateLocalStorage();
@@ -61,6 +72,7 @@ export function inititalizeUI() {
   }
   renderToday(allProjects);
   renderProjects(allProjects);
+  console.log(allProjects);
 }
 
 /**
@@ -91,12 +103,17 @@ function renderToday(stored) {
         ol.classList.add("todo");
         ol.dataset.id = stored[i].todos[j].id;
         ol.dataset.isDueSoon = stored[i].todos[j].isDueSoon;
+        ol.dataset.isLate = stored[i].todos[j].isLate;
         ol.dataset.isToday = stored[i].todos[j].isToday;
         ol.dataset.complete = stored[i].todos[j].complete;
         divTop.classList.add("div-top");
         divMid.classList.add("div-mid");
         divBottom.classList.add("div-bottom");
         check.setAttribute("type", "checkbox");
+        // set checkmark or bullet point based on complete status
+        stored[i].todos[j].complete
+          ? (check.checked = true)
+          : (check.checked = false);
         h4.textContent = stored[i].todos[j].title;
         desc.textContent = stored[i].todos[j].description;
         date.textContent = format(stored[i].todos[j].dueDate, "PPP");
@@ -128,10 +145,10 @@ function renderToday(stored) {
 
         check.addEventListener("click", () => {
           const todo = stored[i].todos[j];
-          console.log(todo);
           todo.toggleComplete();
           updateLocalStorage();
           renderToday(allProjects);
+          ol.classList.add("complete");
         });
       }
     }
@@ -222,12 +239,23 @@ function displayProjectToDos(project) {
     let date = document.createElement("p");
     let priority = document.createElement("p");
     let deleteBtn = document.createElement("button");
+    let divTop = document.createElement("div");
+    let divMid = document.createElement("div");
+    let divBottom = document.createElement("div");
     ol.classList.add("todo");
     ol.dataset.id = project.todos[i].id;
     ol.dataset.isDueSoon = project.todos[i].isDueSoon;
+    ol.dataset.isLate = project.todos[i].isLate;
     ol.dataset.isToday = project.todos[i].isToday;
     ol.dataset.complete = project.todos[i].complete;
+    divTop.classList.add("div-top");
+    divMid.classList.add("div-mid");
+    divBottom.classList.add("div-bottom");
     check.setAttribute("type", "checkbox");
+    // set checkmark or bullet point based on complete status
+    project.todos[i].complete
+      ? (check.checked = true)
+      : (check.checked = false);
     h4.textContent = project.todos[i].title;
     desc.textContent = project.todos[i].description;
     date.textContent = format(project.todos[i].dueDate, "PPP");
@@ -237,12 +265,15 @@ function displayProjectToDos(project) {
     deleteBtn.textContent = "X";
 
     ul.appendChild(ol);
-    ol.appendChild(check);
-    ol.appendChild(h4);
-    ol.appendChild(desc);
-    ol.appendChild(date);
-    ol.appendChild(priority);
-    ol.appendChild(deleteBtn);
+    ol.appendChild(divTop);
+    divTop.appendChild(check);
+    divTop.appendChild(h4);
+    divTop.appendChild(deleteBtn);
+    ol.appendChild(divMid);
+    divMid.appendChild(desc);
+    ol.appendChild(divBottom);
+    divBottom.appendChild(date);
+    divBottom.appendChild(priority);
 
     // Event listeners
     deleteBtn.addEventListener("click", (event) => {
@@ -252,6 +283,13 @@ function displayProjectToDos(project) {
       deleteToDo(proj, todo);
       updateLocalStorage();
       displayProjectToDos(proj);
+    });
+
+    check.addEventListener("click", () => {
+      const todo = project.todos[i];
+      todo.toggleComplete();
+      updateLocalStorage();
+      displayProjectToDos(project);
     });
   }
 }

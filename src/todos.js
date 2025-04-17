@@ -2,7 +2,7 @@
 // Individual ToDo
 import { isToday } from "date-fns";
 
-import { generateID, generateDate, isDueSoon } from "./projects";
+import { generateID, generateDate, isDueSoon, isLate } from "./projects";
 
 export class ToDo {
   constructor(
@@ -22,6 +22,7 @@ export class ToDo {
     this.createdDate = generateDate();
     this.dueDate = dueDate;
     this.isDueSoon = isDueSoon(this.dueDate);
+    this.isLate = isLate(this.dueDate);
     this.isToday = isToday(this.dueDate);
   }
 

@@ -53,8 +53,18 @@ export function isDueSoon(dueDate) {
   if (isFuture(dueDate)) {
     const due = formatDistanceToNow(dueDate);
     if (due === "3 days" || due === "2 days" || due === "1 day") {
-      return due;
+      return true;
       // UI update to show ToDo in yellow
+    } else {
+      return false;
     }
+  }
+}
+
+export function isLate(dueDate) {
+  if (!isFuture(dueDate) && !isToday(dueDate)) {
+    return true;
+  } else {
+    return false;
   }
 }

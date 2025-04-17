@@ -10,7 +10,8 @@ export class ToDo {
     project,
     description = "",
     priority = "low",
-    dueDate = ""
+    dueDate = "",
+    complete = false
   ) {
     this.type = "todo";
     this.project = project;
@@ -18,7 +19,7 @@ export class ToDo {
     this.title = title;
     this.description = description;
     this.priority = priority;
-    this.complete = false;
+    this.complete = complete;
     this.createdDate = generateDate();
     this.dueDate = dueDate;
     this.isDueSoon = isDueSoon(this.dueDate);
@@ -36,7 +37,8 @@ export class ToDo {
       stored.project,
       stored.description,
       stored.priority,
-      new Date(stored.dueDate)
+      stored.dueDate,
+      stored.complete
     );
   }
 }

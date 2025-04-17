@@ -25,7 +25,6 @@ main {
 }
 
 #projects {
-  background-color: darkgray;
   width: 25%;
   flex: 1;
 }
@@ -157,9 +156,14 @@ form {
   width: 90%;
   margin: 10px auto 20px auto;
 }
-form > div {
+#today-form > div {
   display: flex;
   justify-content: space-between;
+}
+#project-form > div,
+#project-todos > div {
+  display: flex;
+  /* justify-content: space-between; */
 }
 
 label {
@@ -197,4 +201,13 @@ input[type="radio"] {
 
 input:focus-visible {
   outline-color: #4caf50;
+}
+
+.project > .div-top > p::before {
+  content: "DUE";
+  font-size: x-small;
+  padding-right: 7px;
+}
+.project > .div-top > button {
+  margin-left: 10px;
 }

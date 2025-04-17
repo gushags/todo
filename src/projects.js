@@ -12,6 +12,7 @@ export class Project {
     this.dueDate = dueDate;
     this.complete = false;
     this.isDueSoon = isDueSoon(this.dueDate);
+    this.isLate = isLate(this.dueDate);
     this.isToday = isToday(this.dueDate);
     this.todos = todos;
   }
@@ -29,7 +30,11 @@ export class Project {
     const proj = new Project("temp");
     proj.name = stored.name;
     proj.id = stored.id;
-    proj.active = stored.active;
+    proj.dueDate = stored.dueDate;
+    proj.isDueSoon = isDueSoon(proj.dueDate);
+    proj.isLate = isLate(proj.dueDate);
+    proj.isToday = isToday(proj.dueDate);
+    proj.complete = stored.complete;
     const todoList = [];
     stored.todos.forEach((todo) => {
       todoList.push(ToDo.fromJson(todo));
@@ -52,6 +57,7 @@ export function generateID() {
 export function isDueSoon(dueDate) {
   if (isFuture(dueDate)) {
     const due = formatDistanceToNow(dueDate);
+    console.log("Due: " + due);
     if (due === "3 days" || due === "2 days" || due === "1 day") {
       return true;
       // UI update to show ToDo in yellow
@@ -67,4 +73,13 @@ export function isLate(dueDate) {
   } else {
     return false;
   }
+}
+
+export function correctDate(date) {
+  let dateArray = date.split("-");
+  let year = dateArray[0];
+  let month = parseInt(dateArray[1], 10) - 1;
+  let day = dateArray[2];
+  let correctDate = new Date(year, month, day);
+  return correctDate;
 }

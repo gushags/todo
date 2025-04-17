@@ -1,6 +1,6 @@
 /* ui.js */
 import { format } from "date-fns";
-import { Project, generateDate } from "./projects";
+import { Project, generateDate, correctDate } from "./projects";
 import { ToDo } from "./todos";
 
 const TODAY = "today";
@@ -31,8 +31,10 @@ export function inititalizeUI() {
       // Render default and projects to DOM
     } else {
       // Create default Today
+      let sampleDate = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
+
       let todayProj = new Project(TODAY);
-      let sampleProj = new Project("Sample Project");
+      let sampleProj = new Project("Sample Project", sampleDate);
       const todayTodo1 = new ToDo(
         "Please delete me",
         todayProj.id,
@@ -88,7 +90,7 @@ function renderToday(stored) {
   today.appendChild(ul);
   // display Today ToDos in #today
   for (let i = 0; i < stored.length; i++) {
-    if (stored[i].name === TODAY || stored[i].isToday) {
+    if (stored[i].name === TODAY) {
       for (let j = 0; j < stored[i].todos.length; j++) {
         let ol = document.createElement("ol");
         let check = document.createElement("input");
@@ -146,6 +148,7 @@ function renderToday(stored) {
         check.addEventListener("click", () => {
           const todo = stored[i].todos[j];
           todo.toggleComplete();
+          console.log(todo);
           updateLocalStorage();
           renderToday(allProjects);
           ol.classList.add("complete");
@@ -165,6 +168,7 @@ function renderProjects(stored) {
   for (let i = 0; i < stored.length; i++) {
     if (stored[i].name !== TODAY) {
       let ol = document.createElement("ol");
+      let div = document.createElement("div");
       let check = document.createElement("input");
       let h4 = document.createElement("h4");
       let date = document.createElement("p");
@@ -172,24 +176,36 @@ function renderProjects(stored) {
       ol.classList.add("project");
       ol.dataset.id = stored[i].id;
       ol.dataset.isDueSoon = stored[i].isDueSoon;
+      ol.dataset.isLate = stored[i].isLate;
       ol.dataset.isToday = stored[i].isToday;
       ol.dataset.complete = stored[i].complete;
+      stored[i].complete ? (check.checked = true) : (check.checked = false);
+      div.classList.add("div-top");
       check.setAttribute("type", "checkbox");
       h4.textContent = stored[i].name;
-      date.textContent = stored[i].dueDate;
+      date.textContent = format(stored[i].dueDate, "P");
       deleteBtn.setAttribute("type", "submit");
       deleteBtn.classList.add("delete-button");
       deleteBtn.textContent = "X";
 
       ul.appendChild(ol);
-      ol.appendChild(check);
-      ol.appendChild(h4);
-      ol.appendChild(date);
-      ol.appendChild(deleteBtn);
+      ol.appendChild(div);
+      div.appendChild(check);
+      div.appendChild(h4);
+      div.appendChild(date);
+      div.appendChild(deleteBtn);
 
       // Add event listeners
       h4.addEventListener("click", () => {
         displayProjectToDos(stored[i]);
+      });
+
+      check.addEventListener("click", () => {
+        const proj = stored[i];
+        proj.toggleComplete();
+        updateLocalStorage();
+        renderProjects(allProjects);
+        ol.classList.add("complete");
       });
 
       deleteBtn.addEventListener("click", (event) => {
@@ -197,8 +213,9 @@ function renderProjects(stored) {
 
         const projID = stored[i].id;
         deleteProject(projID);
-        updateLocalStorage();
+
         renderProjects(allProjects);
+        updateLocalStorage();
       });
     }
   }
@@ -343,8 +360,12 @@ todayButton.addEventListener("click", (event) => {
         '[name="todo-priority"]:checked'
       ).value;
       const date = document.querySelector('[name="todo-date"]').value;
-      const todayToDo = new ToDo(title, proj, desc, priority, date);
+      const correctedDate = correctDate(date);
+
+      const todayToDo = new ToDo(title, proj, desc, priority, correctedDate);
+      console.log(todayToDo);
       today.newToDo(todayToDo);
+      console.log(today);
 
       updateLocalStorage(); // Update storage to reflect change
       renderToday(allProjects); // Update only Today section
@@ -362,13 +383,14 @@ projectButton.addEventListener("click", (event) => {
   event.preventDefault();
 
   const title = document.querySelector('[name="project-title"]').value;
-  const date = document.querySelector('[name="todo-date"]').value;
+  const date = document.querySelector('[name="project-date"]').value;
+  const correctedDate = correctDate(date);
   // Create new project and push to allProjects
-  const project = new Project(title, date);
+  const project = new Project(title, correctedDate);
+  console.log(project);
   allProjects.push(project);
-
-  renderProjects(allProjects); // Update only Projects section
   updateLocalStorage(); // Update storage to reflect change
+  renderProjects(allProjects); // Update only Projects section
 
   const projectForm = document.getElementById("project-form");
   projectForm.reset();
@@ -380,6 +402,15 @@ function createToDoForm() {
   const form = document.createElement("form");
   form.classList.add("display-none");
   form.id = "project-todos";
+
+  const divTop = document.createElement("div");
+  const divMid = document.createElement("div");
+  const divThird = document.createElement("div");
+  const divBottom = document.createElement("div");
+  divTop.classList.add("div-top");
+  divMid.classList.add("div-mid");
+  divThird.classList.add("div-third");
+  divBottom.classList.add("div-bottom");
 
   const labelTitle = document.createElement("label");
   labelTitle.setAttribute("for", "projTodo-title");
@@ -461,29 +492,34 @@ function createToDoForm() {
     ).value;
 
     const date = document.querySelector('[name="projTodo-date"]').value;
-    const projectToDo = new ToDo(title, projID, desc, priority, date);
+    const correctedDate = correctDate(date);
+    const projectToDo = new ToDo(title, projID, desc, priority, correctedDate);
     allProjects[projectIndex].newToDo(projectToDo);
 
     updateLocalStorage(); // Update storage to reflect change
     displayProjectToDos(allProjects[projectIndex]); // Update only Projects section
-
+    renderToday(allProjects);
     form.reset();
   });
 
   // Append to form
-  form.appendChild(labelTitle);
-  form.appendChild(inputTitle);
-  form.appendChild(labelDesc);
-  form.appendChild(inputDesc);
-  form.appendChild(labelDate);
-  form.appendChild(inputDate);
-  form.appendChild(labelPriority);
-  form.appendChild(inputPriority1);
-  form.appendChild(labelPriority1);
-  form.appendChild(inputPriority2);
-  form.appendChild(labelPriority2);
-  form.appendChild(inputPriority3);
-  form.appendChild(labelPriority3);
+  form.appendChild(divTop);
+  divTop.appendChild(labelTitle);
+  divTop.appendChild(inputTitle);
+  form.appendChild(divMid);
+  divMid.appendChild(labelDesc);
+  divMid.appendChild(inputDesc);
+  form.appendChild(divThird);
+  divThird.appendChild(labelDate);
+  divThird.appendChild(inputDate);
+  form.appendChild(divBottom);
+  divBottom.appendChild(labelPriority);
+  divBottom.appendChild(inputPriority1);
+  divBottom.appendChild(labelPriority1);
+  divBottom.appendChild(inputPriority2);
+  divBottom.appendChild(labelPriority2);
+  divBottom.appendChild(inputPriority3);
+  divBottom.appendChild(labelPriority3);
   form.appendChild(projTodoBtn);
 
   return form;

@@ -63,18 +63,25 @@ export function inititalizeUI() {
         "Low",
         new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
       );
+      const sampleTodo2 = new ToDo(
+        "This TODO is from another project",
+        sampleProj.id,
+        "If a TODO is due today, or is late, it will appear in both its project and the default Today project.",
+        "Low",
+        new Date()
+      );
 
       todayProj.newToDo(todayTodo1);
       todayProj.newToDo(todayTodo2);
       todayProj.newToDo(todayTodo3);
       sampleProj.newToDo(sampleTodo);
+      sampleProj.newToDo(sampleTodo2);
       allProjects = [todayProj, sampleProj];
       updateLocalStorage();
     }
   }
   renderToday(allProjects);
   renderProjects(allProjects);
-  console.log(allProjects);
 }
 
 /**
@@ -153,6 +160,84 @@ function renderToday(stored) {
           renderToday(allProjects);
           ol.classList.add("complete");
         });
+      }
+    }
+  }
+  // Check if any TODOS in other projects are due today
+  // or late and put them in Today
+  for (let i = 0; i < stored.length; i++) {
+    if (stored[i].name !== TODAY) {
+      for (let j = 0; j < stored[i].todos.length; j++) {
+        if (
+          stored[i].todos[j].isToday === true ||
+          stored[i].todos[j].isLate === true
+        ) {
+          let ol = document.createElement("ol");
+          let check = document.createElement("input");
+          let h4 = document.createElement("h4");
+          let para = document.createElement("p");
+          let desc = document.createElement("p");
+          let date = document.createElement("p");
+          let priority = document.createElement("p");
+          let deleteBtn = document.createElement("button");
+          let divTop = document.createElement("div");
+          let divMid = document.createElement("div");
+          let divBottom = document.createElement("div");
+          ol.classList.add("todo");
+          ol.dataset.id = stored[i].todos[j].id;
+          ol.dataset.isDueSoon = stored[i].todos[j].isDueSoon;
+          ol.dataset.isLate = stored[i].todos[j].isLate;
+          ol.dataset.isToday = stored[i].todos[j].isToday;
+          ol.dataset.complete = stored[i].todos[j].complete;
+          divTop.classList.add("div-top");
+          divMid.classList.add("div-mid");
+          divBottom.classList.add("div-bottom");
+          para.classList.add("from-project");
+          check.setAttribute("type", "checkbox");
+          // set checkmark or bullet point based on complete status
+          stored[i].todos[j].complete
+            ? (check.checked = true)
+            : (check.checked = false);
+          h4.textContent = stored[i].todos[j].title;
+          para.textContent = "(from " + stored[i].name + ")";
+          desc.textContent = stored[i].todos[j].description;
+          date.textContent = format(stored[i].todos[j].dueDate, "PPP");
+          priority.textContent = stored[i].todos[j].priority;
+          deleteBtn.setAttribute("type", "submit");
+          deleteBtn.classList.add("delete-button");
+          deleteBtn.textContent = "X";
+
+          ul.appendChild(ol);
+          ol.appendChild(divTop);
+          divTop.appendChild(check);
+          divTop.appendChild(h4);
+          divTop.appendChild(para);
+          divTop.appendChild(deleteBtn);
+          ol.appendChild(divMid);
+          divMid.appendChild(desc);
+          ol.appendChild(divBottom);
+          divBottom.appendChild(date);
+          divBottom.appendChild(priority);
+
+          // Event listeners
+          deleteBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const project = stored[i];
+            const todo = stored[i].todos[j].id;
+            deleteToDo(project, todo);
+            updateLocalStorage();
+            renderToday(allProjects);
+          });
+
+          check.addEventListener("click", () => {
+            const todo = stored[i].todos[j];
+            todo.toggleComplete();
+            console.log(todo);
+            updateLocalStorage();
+            renderToday(allProjects);
+            ol.classList.add("complete");
+          });
+        }
       }
     }
   }
@@ -300,6 +385,7 @@ function displayProjectToDos(project) {
       deleteToDo(proj, todo);
       updateLocalStorage();
       displayProjectToDos(proj);
+      renderToday(allProjects);
     });
 
     check.addEventListener("click", () => {
@@ -307,6 +393,7 @@ function displayProjectToDos(project) {
       todo.toggleComplete();
       updateLocalStorage();
       displayProjectToDos(project);
+      renderToday(allProjects);
     });
   }
 }

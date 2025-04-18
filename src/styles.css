@@ -48,7 +48,9 @@ main {
 #today-add:hover,
 #project-add:hover,
 #project-todo-add:hover,
-.delete-button:hover {
+.delete-button:hover,
+#projects-list > ul > ol > div > h4,
+#project-display > h3 {
   cursor: pointer;
 }
 
@@ -210,4 +212,10 @@ input:focus-visible {
 }
 .project > .div-top > button {
   margin-left: 10px;
+}
+
+.from-project {
+  font-style: italic;
+  font-size: smaller;
+  margin-right: 20px;
 }
